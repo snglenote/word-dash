@@ -1,19 +1,16 @@
 import tkinter as tk
 import time
 import threading
-import random
 import requests
-import sys
-import os
-
 
 class WordDashGUI:
     def __init__(self):
-        self.reset = self.reset
         self.running = False  # Initialize running flag
         self.root = tk.Tk()
         self.root.title("Word Dash")
-        self.root.geometry("800x600")
+
+        # Maximize the window
+        self.root.state('zoomed')  # This maximizes the window
 
         self.frame = tk.Frame(self.root)
 
@@ -60,11 +57,15 @@ class WordDashGUI:
             self.speed_label.config(text=f"Speed: \n{cps:.2f} CPS\n{cpm:.2f} CPM")
 
     def reset(self):
-        pass
+        self.running = False
+        self.input_entry.delete(0, 'end')
+        self.sample_label.config(text=get_new_quote())
+        self.input_entry.config(fg="black")
+        self.speed_label.config(text="Speed: \n0.00 CPS\n0.00 CPM")
 
 
 # quote api request
-phrase = requests.get('https://quotable.io/random?minLength=10?tags=famous-quotes')
+phrase = requests.get('https://quotable.io/random?maxLength=50')
 phrase = phrase.json()
 phrase = phrase['content']
 phrase_length = len(phrase.split())
@@ -72,7 +73,7 @@ phrase_length = len(phrase.split())
 
 def get_new_quote():
     try:
-        new_quote = requests.get('https://quotable.io/random?minLength=10?tags=famous-quotes')
+        new_quote = requests.get('https://quotable.io/random?maxLength=50')
         new_quote = new_quote.json()
         new_quote = new_quote['content']
     except:
